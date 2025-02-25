@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Background elements -->
+        <div class="weather-bg"></div>
+        <div class="particles"></div>
+        
+        <header>
+            <h1><i class="fas fa-cloud-sun"></i> Weather Dashboard</h1>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+                <label class="switch">
+                    <input type="checkbox" id="themeSwitch">
+                    <span class="slider round"></span>
+                </label>
+                <i class="fas fa-sun"></i>
+            </div>
+        </header>
+
+        <main>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="cityInput" placeholder="Search for a city...">
+                    <button id="btn" class="search-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="location-btn">
+                    <button id="getCurrentLocation">
+                        <i class="fas fa-location-arrow"></i> Use my location
+                    </button>
+                </div>
+                <div class="recent-searches">
+                    <h3>Recent Searches</h3>
+                    <div id="recentSearchesList" class="recent-list"></div>
+                </div>
+            </div>
+
+            <div class="weather-container">
+                <div class="current-weather">
+                    <div class="weather-card">
+                        <div class="weather-header">
+                            <div class="location">
+                                <h2 id="cityName">--</h2>
+                                <p id="country">--</p>
+                                <p id="date">--</p>
+                            </div>
+                            <div class="icon" id="weatherIcon">
+                                <!-- Weather icon will be inserted here -->
+                            </div>
+                        </div>
+                        <div class="weather-info">
+                            <div class="temperature" id="temperature">--°C</div>
+                            <div class="description" id="description">--</div>
+                            <div class="feels-like">Feels like: <span id="feelsLike">--</span></div>
+                        </div>
+                        <div class="weather-details">
+                            <div class="detail">
+                                <i class="fas fa-wind"></i>
+                                <div>
+                                    <span id="windSpeed">--</span>
+                                    <p>Wind</p>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-tint"></i>
+                                <div>
+                                    <span id="humidity">--</span>
+                                    <p>Humidity</p>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                                <div>
+                                    <span id="pressure">--</span>
+                                    <p>Pressure</p>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-eye"></i>
+                                <div>
+                                    <span id="visibility">--</span>
+                                    <p>Visibility</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="suntime-card">
+                        <div class="sun-info">
+                            <div class="sunrise">
+                                <i class="fas fa-sunrise"></i>
+                                <div>
+                                    <p>Sunrise</p>
+                                    <span id="sunrise">--:--</span>
+                                </div>
+                            </div>
+                            <div class="sunset">
+                                <i class="fas fa-sunset"></i>
+                                <div>
+                                    <p>Sunset</p>
+                                    <span id="sunset">--:--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sun-progress-container">
+                            <div class="sun-progress">
+                                <div class="sun-position" id="sunPosition">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forecast-container">
+                    <h3>5-Day Forecast</h3>
+                    <div class="forecast" id="forecast">
+                        <!-- Forecast items will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="additional-info">
+                    <div class="air-quality-card">
+                        <h3><i class="fas fa-lungs"></i> Air Quality</h3>
+                        <div class="aqi-meter">
+                            <div class="aqi-scale">
+                                <div class="aqi-marker" id="aqiMarker"></div>
+                            </div>
+                            <div class="aqi-labels">
+                                <span>Good</span>
+                                <span>Mod</span>
+                                <span>Poor</span>
+                                <span>Bad</span>
+                                <span>Haz</span>
+                            </div>
+                        </div>
+                        <div class="aqi-value">
+                            <span id="aqiValue">--</span>
+                            <p id="aqiDescription">--</p>
+                        </div>
+                    </div>
+
+                    <div class="hourly-forecast-card">
+                        <h3><i class="fas fa-clock"></i> Hourly Forecast</h3>
+                        <div class="hourly-slider" id="hourlyForecast">
+                            <!-- Hourly forecast items will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="units-toggle">
+                <button id="metricToggle" class="active">°C, m/s</button>
+                <button id="imperialToggle">°F, mph</button>
+            </div>
+            <p>Data provided by <a href="https://openweathermap.org/" target="_blank">OpenWeather</a></p>
+            <div class="settings">
+                <button id="settingsBtn"><i class="fas fa-cog"></i></button>
+            </div>
+        </footer>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <h3>Appearance</h3>
+                        <div class="setting-item">
+                            <label for="animationsToggle">Enable animations</label>
+                            <label class="switch">
+                                <input type="checkbox" id="animationsToggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label for="bgEffectsToggle">Background effects</label>
+                            <label class="switch">
+                                <input type="checkbox" id="bgEffectsToggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>Data</h3>
+                        <div class="setting-item">
+                            <label for="autoRefreshToggle">Auto refresh data</label>
+                            <label class="switch">
+                                <input type="checkbox" id="autoRefreshToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label for="refreshInterval">Refresh interval</label>
+                            <select id="refreshInterval" disabled>
+                                <option value="5">5 minutes</option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <button id="clearDataBtn" class="clear-data-btn">Clear search history</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Fetching weather data...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p id="errorText">City not found. Please try again.</p>
+            <button id="dismissError">OK</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
