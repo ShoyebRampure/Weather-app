@@ -1,9 +1,6 @@
-// API Configuration
 const API_KEY = '5f472b7acba333cd8a035ea85a0d4d4c'; // Changed to a valid OpenWeatherMap API key
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 const WEATHER_ICONS_URL = 'https://openweathermap.org/img/wn';
-
-// DOM Elements
 const cityInput = document.getElementById('cityInput');
 const searchBtn = document.getElementById('btn');
 const locationBtn = document.getElementById('getCurrentLocation');
@@ -26,14 +23,12 @@ const autoRefreshToggle = document.getElementById('autoRefreshToggle');
 const refreshInterval = document.getElementById('refreshInterval');
 const weatherBg = document.querySelector('.weather-bg');
 
-// State variables
 let currentUnit = 'metric';
 let autoRefreshTimer = null;
 let lastSearchedCity = '';
 let currentWeatherData = null;
 let recentSearches = [];
 
-// Initialize the app
 function initApp() {
     loadSettings();
     loadRecentSearches();
@@ -41,32 +36,24 @@ function initApp() {
     checkDarkMode();
 }
 
-// Event Listeners
 function setupEventListeners() {
-    // Search events
     searchBtn.addEventListener('click', handleSearch);
     cityInput.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') handleSearch();
     });
 
-    // Geolocation
     locationBtn.addEventListener('click', getUserLocation);
 
-    // Unit Toggle
     metricToggle.addEventListener('click', () => setUnit('metric'));
     imperialToggle.addEventListener('click', () => setUnit('imperial'));
 
-    // Theme Toggle
     themeSwitch.addEventListener('change', toggleTheme);
 
-    // Settings Modal
     settingsBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
     closeModal.addEventListener('click', () => settingsModal.style.display = 'none');
     window.addEventListener('click', (e) => {
         if (e.target === settingsModal) settingsModal.style.display = 'none';
     });
-
-    // Settings Controls
     clearDataBtn.addEventListener('click', clearSearchHistory);
     animationsToggle.addEventListener('change', updateAnimationSettings);
     bgEffectsToggle.addEventListener('change', updateBackgroundSettings);
@@ -75,7 +62,7 @@ function setupEventListeners() {
     dismissError.addEventListener('click', () => errorMessage.style.display = 'none');
 }
 
-// Search Functions
+
 function handleSearch() {
     const city = cityInput.value.trim();
     if (city === '') {
@@ -91,21 +78,20 @@ async function getWeatherData(city) {
     lastSearchedCity = city;
 
     try {
-        // 1. Current Weather
+
         const weatherResponse = await fetch(`${BASE_URL}/weather?q=${city}&appid=${API_KEY}&units=${currentUnit}`);
         if (!weatherResponse.ok) {
             throw new Error(weatherResponse.statusText);
         }
         const weatherData = await weatherResponse.json();
         
-        // 2. 5-Day Forecast
+        
         const forecastResponse = await fetch(`${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=${currentUnit}`);
         if (!forecastResponse.ok) {
             throw new Error(forecastResponse.statusText);
         }
         const forecastData = await forecastResponse.json();
         
-        // 3. Air Quality Data
         const { lat, lon } = weatherData.coord;
         const airQualityResponse = await fetch(
             `${BASE_URL}/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
@@ -115,7 +101,6 @@ async function getWeatherData(city) {
         }
         const airQualityData = await airQualityResponse.json();
         
-        // Update UI with all data
         currentWeatherData = {
             current: weatherData,
             forecast: forecastData,
@@ -132,7 +117,6 @@ async function getWeatherData(city) {
     }
 }
 
-// Display Functions
 function displayWeatherData() {
     if (!currentWeatherData) return;
     
@@ -294,33 +278,31 @@ function displaySunTimes(weatherData) {
     document.getElementById('sunrise').textContent = sunriseFormatted;
     document.getElementById('sunset').textContent = sunsetFormatted;
     
-    // Position the sun icon based on time of day
+
     positionSunIcon(sunriseTime, sunsetTime, currentTime);
 }
 
 function positionSunIcon(sunrise, sunset, current) {
     const sunPosition = document.getElementById('sunPosition');
-    
-    // Default position (before sunrise or after sunset)
+
     let position = 0;
     
     if (current >= sunrise && current <= sunset) {
-        // Calculate position as percentage of day passed
+
         const totalDayTime = sunset - sunrise;
         const timeSinceSunrise = current - sunrise;
         position = (timeSinceSunrise / totalDayTime) * 100;
         
-        // Position the sun icon
+
         sunPosition.style.bottom = `${Math.sin(Math.PI * (position / 100)) * 80}px`;
         sunPosition.style.left = `${position}%`;
         sunPosition.style.display = 'block';
     } else {
-        // Night time - hide the sun
+
         sunPosition.style.display = 'none';
     }
 }
 
-// Helper Functions
 function getDailyForecasts(forecastList) {
     // Group forecasts by day and get the noon forecast for each day
     const dailyForecasts = [];
@@ -330,8 +312,7 @@ function getDailyForecasts(forecastList) {
         const date = new Date(forecast.dt * 1000);
         const day = date.toISOString().split('T')[0];
         const hour = date.getHours();
-        
-        // Prefer forecasts around noon for the daily summary
+
         if (!dayMap.has(day) || Math.abs(hour - 12) < Math.abs(dayMap.get(day).hour - 12)) {
             dayMap.set(day, { 
                 forecast, 
@@ -340,7 +321,7 @@ function getDailyForecasts(forecastList) {
         }
     });
     
-    // Get the values and limit to 5 days
+
     return Array.from(dayMap.values())
         .map(entry => entry.forecast)
         .slice(0, 5);
@@ -356,10 +337,10 @@ function formatDate(date) {
 }
 
 function updateWeatherBackground(weatherCondition) {
-    // Clear existing classes
+
     weatherBg.className = 'weather-bg';
     
-    // Add appropriate class based on weather condition
+
     switch (weatherCondition.toLowerCase()) {
         case 'clear':
             weatherBg.classList.add('clear-sky');
@@ -387,7 +368,6 @@ function updateWeatherBackground(weatherCondition) {
     }
 }
 
-// Geolocation Function
 function getUserLocation() {
     if (navigator.geolocation) {
         showLoading(true);
@@ -410,7 +390,7 @@ async function getWeatherByCoords(lat, lon) {
     showLoading(true);
     
     try {
-        // Get city name from coordinates
+
         const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`);
         if (!geoResponse.ok) {
             throw new Error(geoResponse.statusText);
@@ -421,8 +401,7 @@ async function getWeatherByCoords(lat, lon) {
             const cityName = geoData[0].name;
             cityInput.value = cityName;
             lastSearchedCity = cityName;
-            
-            // Get weather data for this location
+
             await getWeatherData(cityName);
         } else {
             throw new Error('Location not found');
@@ -434,25 +413,22 @@ async function getWeatherByCoords(lat, lon) {
     }
 }
 
-// Recent Searches Functions
 function updateRecentSearches(city) {
     if (!city) return;
     
-    // Remove the city if it already exists to avoid duplicates
+
     recentSearches = recentSearches.filter(item => item.toLowerCase() !== city.toLowerCase());
     
-    // Add to the beginning of the array
+
     recentSearches.unshift(city);
-    
-    // Keep only the last 5 searches
+
     if (recentSearches.length > 5) {
         recentSearches = recentSearches.slice(0, 5);
     }
     
-    // Save to localStorage
+
     localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-    
-    // Update the UI
+
     displayRecentSearches();
 }
 
@@ -489,13 +465,11 @@ function clearSearchHistory() {
     }, 2000);
 }
 
-// Unit Toggle Functions
 function setUnit(unit) {
     if (currentUnit === unit) return;
     
     currentUnit = unit;
-    
-    // Update toggle buttons
+
     if (unit === 'metric') {
         metricToggle.classList.add('active');
         imperialToggle.classList.remove('active');
@@ -504,16 +478,14 @@ function setUnit(unit) {
         imperialToggle.classList.add('active');
     }
     
-    // Save preference
+
     localStorage.setItem('units', unit);
-    
-    // Refresh data if we have a city
+
     if (lastSearchedCity) {
         getWeatherData(lastSearchedCity);
     }
 }
 
-// Theme Toggle Functions
 function toggleTheme() {
     if (themeSwitch.checked) {
         document.body.classList.add('dark-theme');
@@ -533,39 +505,32 @@ function checkDarkMode() {
     }
 }
 
-// Settings Functions
 function loadSettings() {
     // Load unit preference
     const savedUnit = localStorage.getItem('units');
     if (savedUnit) {
         setUnit(savedUnit);
     }
-    
-    // Load animation settings
-    const animationsEnabled = localStorage.getItem('animationsEnabled');
+const animationsEnabled = localStorage.getItem('animationsEnabled');
     if (animationsEnabled === 'disabled') {
         animationsToggle.checked = false;
         document.body.classList.add('no-animations');
     }
-    
-    // Load background effects settings
+
     const bgEffectsEnabled = localStorage.getItem('bgEffectsEnabled');
     if (bgEffectsEnabled === 'disabled') {
         bgEffectsToggle.checked = false;
         document.querySelector('.particles').style.display = 'none';
     }
-    
-    // Load auto refresh settings
+
     const autoRefresh = localStorage.getItem('autoRefresh');
     if (autoRefresh === 'enabled') {
         autoRefreshToggle.checked = true;
         refreshInterval.disabled = false;
-        
-        // Set the refresh interval
+
         const interval = localStorage.getItem('refreshInterval') || '15';
         refreshInterval.value = interval;
-        
-        // Start auto refresh
+
         startAutoRefresh(parseInt(interval));
     }
 }
@@ -603,8 +568,7 @@ function toggleAutoRefresh() {
     } else {
         refreshInterval.disabled = true;
         localStorage.setItem('autoRefresh', 'disabled');
-        
-        // Clear existing timer
+
         if (autoRefreshTimer) {
             clearInterval(autoRefreshTimer);
             autoRefreshTimer = null;
@@ -616,7 +580,7 @@ function updateRefreshInterval() {
     const interval = refreshInterval.value;
     localStorage.setItem('refreshInterval', interval);
     
-    // Restart auto refresh with new interval
+
     if (autoRefreshToggle.checked) {
         if (autoRefreshTimer) {
             clearInterval(autoRefreshTimer);
@@ -626,12 +590,10 @@ function updateRefreshInterval() {
 }
 
 function startAutoRefresh(minutes) {
-    // Clear any existing timer
     if (autoRefreshTimer) {
         clearInterval(autoRefreshTimer);
     }
     
-    // Set new timer (convert minutes to milliseconds)
     autoRefreshTimer = setInterval(() => {
         if (lastSearchedCity) {
             getWeatherData(lastSearchedCity);
@@ -639,7 +601,7 @@ function startAutoRefresh(minutes) {
     }, minutes * 60 * 1000);
 }
 
-// UI Helpers
+
 function showLoading(isLoading) {
     loadingSpinner.style.display = isLoading ? 'flex' : 'none';
 }
@@ -665,5 +627,4 @@ function showError(message, isSuccess = false) {
     }, 5000);
 }
 
-// Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', initApp);
