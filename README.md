@@ -2,7 +2,6 @@
 
 A modern, responsive weather application that provides real-time weather information with a sleek, interactive interface.
 
-![Weather Dashboard Preview](https://raw.githubusercontent.com/ShoyebRampure/Weather-app/main/screenshots/app-preview.png)
 
 ## Features
 
